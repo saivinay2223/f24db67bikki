@@ -1,0 +1,18 @@
+extends layout
+
+block content
+  h1 Search Results for Galaxies
+  p Here are some sample galaxies.
+
+  - var results = []
+  - results.push({ name: "Andromeda", distance: 2537000, type: "Spiral" })
+  - results.push({ name: "Milky Way", distance: 0, type: "Spiral" })
+  - results.push({ name: "Triangulum", distance: 3000000, type: "Spiral" })
+
+  div.container-fluid
+    div.row
+      each galaxy in results
+        div.col-sm-2
+          p= `Name: ${galaxy.name}`
+          p= `Distance: ${galaxy.distance} light-years`
+          p= `Type: ${galaxy.type}`

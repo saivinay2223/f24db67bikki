@@ -1,0 +1,15 @@
+extends layout
+
+block content
+  h1 Welcome to vinay's web pages
+  p This is a sample web page with an interactive button.
+  button(type="button", class="btn btn-secondary", onclick="boost()") Sample Button
+  div#boost Add in extra
+  script.
+    let value = 0;
+    let amt = 3;
+    function boost() {
+      amt += 1;
+      value += amt;
+      document.getElementById('boost').innerText = `Boosted ${value} by ${amt}`;
+    }

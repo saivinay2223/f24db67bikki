@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title= title
+  body
+    h1 Search Results
+    each item, index in results
+      div(class="item", onclick=`buy(${index})`)
+        h2 #{item.name}
+        p Price: #{item.price}
+
+    script.
+      function buy(index) {
+        alert(`You purchased item ${index}`);
+      }

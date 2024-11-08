@@ -1,0 +1,29 @@
+//- grid.pug
+doctype html
+html
+  head
+    title= title
+  body
+    h1 Grid Display Page
+
+    //- Display the values of query parameters for debugging
+    p Rows: #{query.rows}, Columns: #{query.cols}
+
+    //- Convert query parameters to numbers
+    - let rows = Number(query.rows)
+    - let cols = Number(query.cols)
+
+    //- Validate the inputs
+    if !Number.isInteger(rows) || !Number.isInteger(cols)
+      p Invalid input: Rows and columns must be integers.
+    else if rows < 3 || rows > 13
+      p Error: Rows value should be between 3 and 13.
+    else if cols < 3 || cols > 13
+      p Error: Columns value should be between 3 and 13.
+    else
+      //- Generate a table with calculated cell values
+      table#outer
+        - for (let i = 0; i < rows; i++)
+          tr#middle
+            - for (let j = 0; j < cols; j++)
+              td= (i * i) + j
