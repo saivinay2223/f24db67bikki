@@ -23,9 +23,9 @@ exports.galaxie_detail = async function(req, res) {
 // Create Galaxy on POST
 exports.galaxie_create_post = async function(req, res) {
     let document = new Galaxie();
-    document.name = req.body.name;
-    document.distance = req.body.distance;
-    document.type = req.body.type;
+    document.Name = req.body.Name;
+    document.Distance = req.body.Distance;
+    document.Type = req.body.ype;
     try {
         let result = await document.save();
         res.send(result);  // Changed to `res.send` for consistency
