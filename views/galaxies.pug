@@ -1,21 +1,35 @@
 extends layout
 
 block content
-  h1 Search Results for Galaxies
-  p Here are some sample galaxies.
+  h1
+    if isSingle
+      | Galaxy Detail
+    else
+      | Search Results for Galaxies
+
+  p
+    if isSingle
+      | Showing details for galaxy: #{galaxy.name}
+    else
+      | Here are some sample galaxies.
 
   .container-fluid
     .row
-      each galaxy in results
-        div.col-sm-2
-          p= `ID: ${galaxy._id}`
-          p= `Name: ${galaxy.name}`
-          p= `Year: ${galaxy.year}`
-          p= `Inventor: ${galaxy.inventor}`
-          p= `Distance: ${galaxy.distance} light-years`
-          p= `Type: ${galaxy.type}`
-          a(href=`/galaxies/${galaxy._id}`) Inspect
-          a(href=`/galaxies/${galaxy._id}/update`) Update
-          a(href=`/galaxies/${galaxy._id}/delete`) Delete
-  
+      // Ensure results exist and is an array before iterating
+      if results && results.length > 0
+        each galaxy in results
+          .col-sm-2
+            p= `ID: ${galaxy._id}`
+            p= `Name: ${galaxy.name}`
+            p= `Year: ${galaxy.year}`
+            p= `Inventor: ${galaxy.inventor}`
+            p= `Distance: ${galaxy.distance} light-years`
+            p= `Type: ${galaxy.type}`
+            a(href=`/galaxies/${galaxy._id}`) Inspect
+            a(href=`/galaxies/${galaxy._id}/update`) Update
+            a(href=`/galaxies/${galaxy._id}/delete`) Delete
+      else
+        p No galaxies found.
+
+  // Add a link to add a new galaxy
   a(href='/galaxies/create') Add New Galaxy

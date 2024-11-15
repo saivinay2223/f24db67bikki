@@ -4,7 +4,7 @@ const Galaxy = require('../models/galaxies');
 exports.galaxy_list = async function(req, res) {
   try {
     const galaxies = await Galaxy.find();
-    res.render('galaxies', { results: galaxies });
+    res.render('galaxies', { results: galaxies, isSingle: false });  // Pass isSingle as false for a list
   } catch (err) {
     res.status(500).send(`Error: ${err}`);
   }
@@ -12,10 +12,12 @@ exports.galaxy_list = async function(req, res) {
 
 // View details of a specific galaxy
 exports.galaxy_detail = async function(req, res) {
+  console.log("Detail for Galaxy ID: " + req.params.id);
   try {
     const galaxy = await Galaxy.findById(req.params.id);
     if (galaxy) {
-      res.render('galaxy_detail', { galaxy: galaxy });
+      // Render 'galaxies.pug' but pass the single galaxy and isSingle flag as true
+      res.render('galaxies', { galaxy: galaxy, isSingle: true });
     } else {
       res.status(404).send('Galaxy not found');
     }
@@ -32,7 +34,7 @@ exports.galaxy_create_post = async function(req, res) {
   document.inventor = req.body.inventor;
   document.distance = req.body.distance;
   document.type = req.body.type;
-  
+
   try {
     let result = await document.save();
     res.status(201).send(result);
@@ -60,10 +62,10 @@ exports.galaxy_update_put = async function(req, res) {
   try {
     const updatedGalaxy = await Galaxy.findByIdAndUpdate(
       req.params.id,
-      { 
-        name: req.body.name, 
-        year: req.body.year, 
-        inventor: req.body.inventor, 
+      {
+        name: req.body.name,
+        year: req.body.year,
+        inventor: req.body.inventor,
         distance: req.body.distance,
         type: req.body.type
       },
