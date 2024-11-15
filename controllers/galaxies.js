@@ -1,46 +1,80 @@
-const Galaxie = require('../models/galaxie'); // Adjust if model filename is different
+const Galaxy = require('../models/galaxies');
 
-// List of all Galaxies
-exports.galaxie_list = async function(req, res) {
-    try {
-        const galaxies = await Galaxie.find();
-        res.render('galaxies', { results: galaxies });
-    } catch (err) {
-        res.status(500).send(`Error: ${err}`);
+// List all galaxies
+exports.galaxy_list = async function(req, res) {
+  try {
+    const galaxies = await Galaxy.find();
+    res.render('galaxies', { results: galaxies });
+  } catch (err) {
+    res.status(500).send(`Error: ${err}`);
+  }
+};
+
+// View details of a specific galaxy
+exports.galaxy_detail = async function(req, res) {
+  try {
+    const galaxy = await Galaxy.findById(req.params.id);
+    if (galaxy) {
+      res.render('galaxy_detail', { galaxy: galaxy });
+    } else {
+      res.status(404).send('Galaxy not found');
     }
+  } catch (err) {
+    res.status(500).send(`Error: ${err}`);
+  }
 };
 
-// Detail of a specific Galaxy
-exports.galaxie_detail = async function(req, res) {
-    try {
-        const galaxie = await Galaxie.findById(req.params.id);
-        res.send(galaxie);  // Changed to `res.send` for consistency
-    } catch (err) {
-        res.status(500).send(`Error fetching details: ${err}`);
+// Create a new galaxy
+exports.galaxy_create_post = async function(req, res) {
+  let document = new Galaxy();
+  document.name = req.body.name;
+  document.year = req.body.year;
+  document.inventor = req.body.inventor;
+  document.distance = req.body.distance;
+  document.type = req.body.type;
+  
+  try {
+    let result = await document.save();
+    res.status(201).send(result);
+  } catch (err) {
+    res.status(500).send(`Error: ${err}`);
+  }
+};
+
+// Delete a galaxy
+exports.galaxy_delete = async function(req, res) {
+  try {
+    const result = await Galaxy.findByIdAndDelete(req.params.id);
+    if (result) {
+      res.status(200).send(`Galaxy ${req.params.id} deleted successfully`);
+    } else {
+      res.status(404).send('Galaxy not found');
     }
+  } catch (err) {
+    res.status(500).send(`Error: ${err}`);
+  }
 };
 
-// Create Galaxy on POST
-exports.galaxie_create_post = async function(req, res) {
-    let document = new Galaxie();
-    document.Name = req.body.Name;
-    document.Distance = req.body.Distance;
-    document.Type = req.body.ype;
-    try {
-        let result = await document.save();
-        res.send(result);  // Changed to `res.send` for consistency
-    } catch (err) {
-        res.status(500);
-        res.send(`{"error": ${err}}`);  // Adjusted to match the second code's error handling
+// Update a galaxy
+exports.galaxy_update_put = async function(req, res) {
+  try {
+    const updatedGalaxy = await Galaxy.findByIdAndUpdate(
+      req.params.id,
+      { 
+        name: req.body.name, 
+        year: req.body.year, 
+        inventor: req.body.inventor, 
+        distance: req.body.distance,
+        type: req.body.type
+      },
+      { new: true }
+    );
+    if (updatedGalaxy) {
+      res.status(200).send(updatedGalaxy);
+    } else {
+      res.status(404).send('Galaxy not found');
     }
-};
-
-// Delete Galaxy on DELETE
-exports.galaxie_delete = function(req, res) {
-    res.send('NOT IMPLEMENTED: Galaxy delete DELETE ' + req.params.id);  // Placeholder response for consistency
-};
-
-// Update Galaxy on PUT
-exports.galaxie_update_put = function(req, res) {
-    res.send('NOT IMPLEMENTED: Galaxy update PUT ' + req.params.id);  // Placeholder response for consistency
+  } catch (err) {
+    res.status(500).send(`Error: ${err}`);
+  }
 };

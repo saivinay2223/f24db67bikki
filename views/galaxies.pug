@@ -4,17 +4,18 @@ block content
   h1 Search Results for Galaxies
   p Here are some sample galaxies.
 
-  - var results = []
-  - results.push({ name: "Andromeda", distance: 2537000, type: "Spiral" })
-  - results.push({ name: "Milky Way", distance: 0, type: "Spiral" })
-  - results.push({ name: "Triangulum", distance: 3000000, type: "Spiral" })
-  - results.push({ name: "Trian", distance: 4000000, type: "Spiral" })
-
-
-  div.container-fluid
-    div.row
+  .container-fluid
+    .row
       each galaxy in results
         div.col-sm-2
+          p= `ID: ${galaxy._id}`
           p= `Name: ${galaxy.name}`
+          p= `Year: ${galaxy.year}`
+          p= `Inventor: ${galaxy.inventor}`
           p= `Distance: ${galaxy.distance} light-years`
           p= `Type: ${galaxy.type}`
+          a(href=`/galaxies/${galaxy._id}`) Inspect
+          a(href=`/galaxies/${galaxy._id}/update`) Update
+          a(href=`/galaxies/${galaxy._id}/delete`) Delete
+  
+  a(href='/galaxies/create') Add New Galaxy
