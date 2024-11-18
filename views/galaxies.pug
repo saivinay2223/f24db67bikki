@@ -33,3 +33,15 @@ block content
 
   // Add a link to add a new galaxy
   a(href='/galaxies/create') Add New Galaxy
+
+  // Display details for a single galaxy if isSingle is true
+  if isSingle && galaxy
+    .galaxy-detail
+      h3 Galaxy Details
+      p Name: #{galaxy.name}
+      p Year: #{galaxy.year}
+      p Inventor: #{galaxy.inventor}
+      p Distance: #{galaxy.distance} light-years
+      p Type: #{galaxy.type}
+      a(href=`/galaxies/${galaxy._id}/update`) Update Galaxy
+      a(href=`/galaxies/${galaxy._id}/delete`) Delete Galaxy

@@ -6,7 +6,8 @@ exports.galaxy_list = async function(req, res) {
     const galaxies = await Galaxy.find();
     res.render('galaxies', { results: galaxies, isSingle: false });  // Pass isSingle as false for a list
   } catch (err) {
-    res.status(500).send(`Error: ${err}`);
+    console.error("Error fetching galaxies: ", err);
+    res.status(500).send(`Error: Unable to retrieve galaxies. Please try again later.`);
   }
 };
 
@@ -22,24 +23,27 @@ exports.galaxy_detail = async function(req, res) {
       res.status(404).send('Galaxy not found');
     }
   } catch (err) {
-    res.status(500).send(`Error: ${err}`);
+    console.error("Error fetching galaxy details: ", err);
+    res.status(500).send(`Error: Unable to retrieve galaxy details. Please try again later.`);
   }
 };
 
 // Create a new galaxy
 exports.galaxy_create_post = async function(req, res) {
-  let document = new Galaxy();
-  document.name = req.body.name;
-  document.year = req.body.year;
-  document.inventor = req.body.inventor;
-  document.distance = req.body.distance;
-  document.type = req.body.type;
+  const document = new Galaxy({
+    name: req.body.name,
+    year: req.body.year,
+    inventor: req.body.inventor,
+    distance: req.body.distance,
+    type: req.body.type,
+  });
 
   try {
-    let result = await document.save();
+    const result = await document.save();
     res.status(201).send(result);
   } catch (err) {
-    res.status(500).send(`Error: ${err}`);
+    console.error("Error creating galaxy: ", err);
+    res.status(500).send(`Error: Unable to create galaxy. Please try again later.`);
   }
 };
 
@@ -53,30 +57,32 @@ exports.galaxy_delete = async function(req, res) {
       res.status(404).send('Galaxy not found');
     }
   } catch (err) {
-    res.status(500).send(`Error: ${err}`);
+    console.error("Error deleting galaxy: ", err);
+    res.status(500).send(`Error: Unable to delete galaxy. Please try again later.`);
   }
 };
 
 // Update a galaxy
 exports.galaxy_update_put = async function(req, res) {
   try {
-    const updatedGalaxy = await Galaxy.findByIdAndUpdate(
-      req.params.id,
-      {
-        name: req.body.name,
-        year: req.body.year,
-        inventor: req.body.inventor,
-        distance: req.body.distance,
-        type: req.body.type
-      },
-      { new: true }
-    );
-    if (updatedGalaxy) {
+    // Retrieve the galaxy by ID to update
+    const galaxyToUpdate = await Galaxy.findById(req.params.id);
+    
+    // If galaxy exists, update only the fields that are passed in the body
+    if (galaxyToUpdate) {
+      if (req.body.name) galaxyToUpdate.name = req.body.name;
+      if (req.body.year) galaxyToUpdate.year = req.body.year;
+      if (req.body.inventor) galaxyToUpdate.inventor = req.body.inventor;
+      if (req.body.distance) galaxyToUpdate.distance = req.body.distance;
+      if (req.body.type) galaxyToUpdate.type = req.body.type;
+
+      const updatedGalaxy = await galaxyToUpdate.save();
       res.status(200).send(updatedGalaxy);
     } else {
       res.status(404).send('Galaxy not found');
     }
   } catch (err) {
-    res.status(500).send(`Error: ${err}`);
+    console.error("Error updating galaxy: ", err);
+    res.status(500).send(`Error: Unable to update galaxy. Please try again later.`);
   }
 };
