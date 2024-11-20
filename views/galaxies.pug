@@ -1,98 +1,32 @@
 extends layout
 
 block content
-  h1
+  h1 
     if isSingle
       | Galaxy Detail
     else
-      | Search Results for Galaxies
-
-  p
-    if isSingle
-      | Showing details for galaxy: #{galaxy.name}
-    else
-      | Here are some sample galaxies.
+      | Search Results - Galaxies
 
   .container-fluid
     .row
-      // Ensure results exist and are an array before iterating
+      // Ensure results exist and iterate through them
       if results && results.length > 0
         each galaxy in results
-          .col-sm-2
-            p Instance ID:
-              span.instanceAttr #{galaxy._id}
-            p Name:
-              span.instanceAttr #{galaxy.name}
-            p Year:
-              span.instanceAttr #{galaxy.year}
-            p Inventor:
-              span.instanceAttr #{galaxy.inventor}
-            p Distance:
-              span.instanceAttr #{galaxy.distance} light-years
-            p Type:
-              span.instanceAttr #{galaxy.type}
-            a(href=`/galaxies/${galaxy._id}` class="btn btn-primary btn-sm") Inspect
-            a(href=`/galaxies/${galaxy._id}/update` class="btn btn-warning btn-sm") Update
-            a(href=`/galaxies/${galaxy._id}/delete` class="btn btn-danger btn-sm") Delete
+          .col-sm-2(onclick=`inspect('${galaxy._id}')`)
+            h3 #{galaxy.name}
+            p Year: #{galaxy.year}
+            p Inventor: #{galaxy.inventor}
+            p Distance: #{galaxy.distance} light-years
+            p Type: #{galaxy.type}
       else
         p No galaxies found.
 
-  // Add a link to add a new galaxy
-  a(href='/galaxies/create' class="btn btn-success") Add New Galaxy
+  // Back to Home link
+  a(href='/') Back to Home
 
-  // Display details for a single galaxy if isSingle is true
-  if isSingle && galaxy
-    .galaxy-detail
-      h3 Galaxy Details
-      p Name:
-        span.instanceAttr #{galaxy.name}
-      p Year:
-        span.instanceAttr #{galaxy.year}
-      p Inventor:
-        span.instanceAttr #{galaxy.inventor}
-      p Distance:
-        span.instanceAttr #{galaxy.distance} light-years
-      p Type:
-        span.instanceAttr #{galaxy.type}
-      a(href=`/galaxies/${galaxy._id}/update` class="btn btn-warning btn-sm") Update Galaxy
-      a(href=`/galaxies/${galaxy._id}/delete` class="btn btn-danger btn-sm") Delete Galaxy
-
-  // Galaxy creation page if "create" route is being accessed
-  if createPage
-    h3 Create New Galaxy
-    form(id='GalaxyForm', action='/galaxies', method='POST')
-      .form-group
-        label(for='name') Galaxy Name
-        input#name.form-control(type='text', name='name' required)
-      .form-group
-        label(for='year') Year
-        input#year.form-control(type='text', name='year' required)
-      .form-group
-        label(for='inventor') Inventor
-        input#inventor.form-control(type='text', name='inventor' required)
-      .form-group
-        label(for='distance') Distance (light-years)
-        input#distance.form-control(type='number', name='distance' required)
-      .form-group
-        label(for='type') Galaxy Type
-        input#type.form-control(type='text', name='type' required)
-      input.btn.btn-primary(type='submit', value='Create Galaxy')
-
-    script.
-      document.forms['GalaxyForm'].addEventListener('submit', (event) => {
-        event.preventDefault();  // Prevent form submission
-
-        fetch(event.target.action, {
-          method: 'POST',
-          body: new URLSearchParams(new FormData(event.target))  // Convert form data to URLSearchParams
-        })
-        .then((resp) => resp.json())  // Parse response as JSON
-        .then((body) => {
-          alert("Galaxy created successfully!");
-          // Optionally redirect to the galaxies list or show success message
-          window.location.href = "/galaxies";  // Redirect back to the galaxy list
-        })
-        .catch((error) => {
-          alert("Error creating galaxy: " + error);
-        });
-      });
+  // Script for the click functionality
+  script.
+    function inspect(id) {
+      alert(`Inspecting Galaxy ID: ${id}`);
+      window.location.href = `/galaxies/${id}`;  // Redirect to galaxy details
+    }

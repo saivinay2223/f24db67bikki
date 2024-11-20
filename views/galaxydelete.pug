@@ -1,0 +1,63 @@
+extends layout
+
+block content
+  h1= title
+
+  // Check if the costume to delete is found
+  if (toShow == null)
+    h2 No instance to delete
+  else
+    - let costumeid = toShow._id
+    - let costume_type = toShow.costume_type
+    - let costumecost = toShow.cost
+    - let costumesize = toShow.size
+    - let actionid = "/resource/costumes/" + costumeid
+
+    // Show costume details before delete
+    .container
+      .row
+        .col-md-8.offset-md-2
+          .card
+            .card-header
+              h3 Costume Details
+            .card-body
+              div.row
+                div.col-md-4.font-weight-bold Costume ID:
+                div.col-md-8 #{costumeid}
+              div.row
+                div.col-md-4.font-weight-bold Costume Type:
+                div.col-md-8 #{costume_type}
+              div.row
+                div.col-md-4.font-weight-bold Costume Size:
+                div.col-md-8 #{costumesize}
+              div.row
+                div.col-md-4.font-weight-bold Costume Cost:
+                div.col-md-8 #{costumecost}
+              div.mt-3
+                // Action buttons
+                button.btn.btn-danger.m-2(onclick="deleteOnid()") Delete
+                button.btn.btn-secondary.m-2(onclick="cancel()") Cancel
+
+    script.
+      // Function to handle Cancel action
+      function cancel() {
+        window.location.href='/costumes'
+      }
+
+    script.
+      // Function to handle Delete action
+      function deleteOnid() {
+        console.log("Starting delete")
+        
+        fetch(actionid, {
+          method: 'DELETE'  // Sending DELETE request to the server
+        })
+        .then((resp) => resp.json())  // Parsing response as JSON
+        .then((body) => {
+          alert("Delete succeeded");
+          window.location.href='/costumes';  // Redirect to costume list after delete
+        })
+        .catch((error) => {
+          alert("Delete failed: " + error);  // Handle errors
+        });
+      }

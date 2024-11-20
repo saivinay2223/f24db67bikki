@@ -1,28 +1,68 @@
 extends layout
 
 block content
-  h1 Create a New Galaxy
+  h1= title
 
-  form(id='GalaxyCreateForm', action='/galaxies', method='POST')
+  form(id='GalaxyForm', action='/resource/galaxies', method='POST')
     div.form-group
       label(for='name') Galaxy Name
       input#name.form-control(type='text', name='name', required)
+
     div.form-group
       label(for='year') Year
-      input#year.form-control(type='text', name='year', required)
+      input#year.form-control(type='number', name='year', required min='1901' max='9999')
+      p.text-muted Year must be later than 1900.
+
     div.form-group
       label(for='inventor') Inventor
       input#inventor.form-control(type='text', name='inventor', required)
+
     div.form-group
       label(for='distance') Distance (light-years)
       input#distance.form-control(type='number', name='distance', required)
+
     div.form-group
       label(for='type') Galaxy Type
-      input#type.form-control(type='text', name='type', required)
-    
+      select#type.form-control(name='type', required)
+        option(value='spiral') Spiral
+        option(value='elliptical') Elliptical
+        option(value='irregular') Irregular
+      p.text-muted Please select a valid galaxy type.
+
     input.btn.btn-primary(type='submit', value='Create Galaxy')
+    button.btn.btn-secondary(type='reset') Reset
 
   // Displaying error/success messages (optional)
   if message
     p(class='alert' + (message.type === 'error' ? ' alert-danger' : ' alert-success'))
       = message.text
+
+  // Script for handling form submission
+  script.
+    document.forms['GalaxyForm'].addEventListener('submit', (event) => {
+      event.preventDefault(); // Prevent default form submission
+      const form = event.target;
+      const formData = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams(formData) // Serialize form data
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          alert("Galaxy created successfully!");
+          form.reset(); // Reset the form after successful submission
+        })
+        .catch((error) => {
+          alert("Failed to create galaxy. Error: " + error.message);
+          console.error("Submission error:", error);
+        });
+    });

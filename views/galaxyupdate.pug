@@ -1,0 +1,73 @@
+extends layout
+
+block content
+  h1 Galaxy Update
+
+  // Check if the galaxy to update is found
+  if (toShow == null)
+    h2 No instance found to update
+  else
+    - let galaxyid = toShow._id
+    - let name = toShow.name
+    - let inventor = toShow.inventor
+    - let year = toShow.year
+    - let distance = toShow.distance
+    - let type = toShow.type
+
+    // Displaying the Galaxy ID
+    div.row.mb-3
+      div.mr-1.font-weight-bold ID is:
+      div #{galaxyid}
+
+    // Setting the action URL for the PUT request
+    - let actionid = "/resource/galaxies/" + galaxyid
+    form(id='galaxyForm', action=actionid, method="PUT")
+      div.form-group
+        label(for='name') Galaxy Name:
+        input#name.form-control(type='text', name='name', value=name, required)
+        
+      div.form-group
+        label(for='year') Year:
+        input#year.form-control(type='number', name='year', value=year, required)
+        
+      div.form-group
+        label(for='inventor') Inventor:
+        input#inventor.form-control(type='text', name='inventor', value=inventor, required)
+        
+      div.form-group
+        label(for='distance') Distance (light-years):
+        input#distance.form-control(type='number', name='distance', value=distance, required)
+        
+      div.form-group
+        label(for='type') Galaxy Type:
+        input#type.form-control(type='text', name='type', value=type, required)
+
+      input(type="submit", class="btn btn-primary mt-2")
+
+    // Cancel button to go back to the galaxy list
+    button(class="btn btn-secondary mt-2 ml-2" onclick="goBack()") Cancel
+
+  script.
+    // Function to handle the back button action
+    function goBack() {
+      window.location.href = "/galaxies";
+    }
+
+  script.
+    // Event listener for form submission
+    document.forms['galaxyForm'].addEventListener('submit', (event) => {
+      event.preventDefault(); // Prevent default form submission
+
+      fetch(event.target.action, {
+        method: 'PUT',
+        body: new URLSearchParams(new FormData(event.target)) // Serialize form data
+      })
+      .then((resp) => resp.json()) // Parse JSON response
+      .then((body) => {
+        alert("Update succeeded");
+        window.location.href = "/galaxies"; // Redirect back to the galaxy list after success
+      })
+      .catch((error) => {
+        alert("Update failed " + error); // Show error if the update fails
+      });
+    });
