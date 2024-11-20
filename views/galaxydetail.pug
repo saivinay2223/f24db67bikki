@@ -1,41 +1,43 @@
 extends layout
 
 block content
-    h1 Galaxy Detail
+  h1 Galaxy Detail
 
-    if (toShow == null)
-        h2 No instance found
-    else
-        - let galaxyid = toShow._id
-        - let name = toShow.name
-        - let galaxiesyear = toShow.year
-        - let galaxiesinventor = toShow.inventor
-        - let galaxydistance = toShow.distance
-        - let galaxystype = toShow.type
+  // Check if the galaxy data exists
+  if (toShow == null)
+    h2 No instance found
+  else
+    - let galaxyid = toShow._id
+    - let name = toShow.name
+    - let galaxiesyear = toShow.year
+    - let galaxiesinventor = toShow.inventor
+    - let galaxydistance = toShow.distance
+    - let galaxystype = toShow.type
 
-        div(class="mb-3")
-            div.row.mb-2
-                div(class='galaxyAttr mr-3 font-weight-bold') Galaxy ID:
-                div #{galaxyid}
-            div.row.mb-2
-                div(class='galaxyAttr mr-3 font-weight-bold') Galaxy Name:
-                div #{name}
-            div.row.mb-2
-                div(class='galaxyAttr mr-3 font-weight-bold') Year:
-                div #{galaxiesyear}
-            div.row.mb-2
-                div(class='galaxyAttr mr-3 font-weight-bold') Inventor:
-                div #{galaxiesinventor}
-            div.row.mb-2
-                div(class='galaxyAttr mr-3 font-weight-bold') Distance (light-years):
-                div #{galaxydistance}
-            div.row.mb-2
-                div(class='galaxyAttr mr-3 font-weight-bold') Type:
-                div #{galaxystype}
+    // Display Galaxy details in a well-structured layout
+    .container
+      .row.mb-3
+        .col-md-12
+          .card
+            .card-body
+              h5.card-title= name
+              p Year: #{galaxiesyear}
+              p Inventor: #{galaxiesinventor}
+              p Distance: #{galaxydistance} light-years
+              p Type: #{galaxystype}
+              
+    // Display the Galaxy ID in a styled row for clarity
+    .container
+      .row.mb-3
+        .col-md-12
+          .font-weight-bold.mb-1 Galaxy ID:
+          div #{galaxyid}
 
-        button(class="btn btn-secondary mt-3" onclick="goBack()") Go Back
+    // Go Back button
+    .text-center.mt-4
+      button.btn.btn-secondary(onclick="goBack()") Go Back
 
-    script.
-        function goBack() {
-            window.location.href = "/galaxies";  // Redirect to the galaxies list page
-        }
+  script.
+    function goBack() {
+      window.location.href = "/galaxies";  // Redirect to the galaxies list page
+    }

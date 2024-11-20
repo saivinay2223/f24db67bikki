@@ -1,7 +1,7 @@
 extends layout
 
 block content
-  h1 
+  h1
     if isSingle
       | Galaxy Detail
     else
@@ -9,24 +9,35 @@ block content
 
   .container-fluid
     .row
-      // Ensure results exist and iterate through them
+      // Check if results exist and iterate through them
       if results && results.length > 0
         each galaxy in results
-          .col-sm-2(onclick=`inspect('${galaxy._id}')`)
-            h3 #{galaxy.name}
-            p Year: #{galaxy.year}
-            p Inventor: #{galaxy.inventor}
-            p Distance: #{galaxy.distance} light-years
-            p Type: #{galaxy.type}
+          .col-sm-3.mb-4
+            .card(onclick=`inspect('${galaxy._id}')`, style="cursor: pointer;")
+              .card-body
+                h5.card-title #{galaxy.name}
+                p.card-text Year: #{galaxy.year}
+                p.card-text Inventor: #{galaxy.inventor}
+                p.card-text Distance: #{galaxy.distance} light-years
+                p.card-text Type: #{galaxy.type}
       else
-        p No galaxies found.
+        .col-12
+          p No galaxies found.
 
-  // Back to Home link
-  a(href='/') Back to Home
+  // Back to Home link with Bootstrap styling
+  .mt-4
+    a.btn.btn-primary(href='/') Back to Home
 
   // Script for the click functionality
   script.
     function inspect(id) {
       alert(`Inspecting Galaxy ID: ${id}`);
       window.location.href = `/galaxies/${id}`;  // Redirect to galaxy details
+    }
+
+  // Optional: Hover effect for the clickable cards
+  style.
+    .card:hover {
+      transform: scale(1.05);
+      transition: transform 0.3s ease;
     }
