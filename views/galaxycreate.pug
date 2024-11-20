@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  h1 Create a New Galaxy
+
+  form(id='GalaxyCreateForm', action='/galaxies', method='POST')
+    div.form-group
+      label(for='name') Galaxy Name
+      input#name.form-control(type='text', name='name', required)
+    div.form-group
+      label(for='year') Year
+      input#year.form-control(type='text', name='year', required)
+    div.form-group
+      label(for='inventor') Inventor
+      input#inventor.form-control(type='text', name='inventor', required)
+    div.form-group
+      label(for='distance') Distance (light-years)
+      input#distance.form-control(type='number', name='distance', required)
+    div.form-group
+      label(for='type') Galaxy Type
+      input#type.form-control(type='text', name='type', required)
+    
+    input.btn.btn-primary(type='submit', value='Create Galaxy')
+
+  // Displaying error/success messages (optional)
+  if message
+    p(class='alert' + (message.type === 'error' ? ' alert-danger' : ' alert-success'))
+      = message.text
