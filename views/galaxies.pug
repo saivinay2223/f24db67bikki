@@ -19,29 +19,40 @@ block content
       if results && results.length > 0
         each galaxy in results
           .col-sm-2
-            p= `ID: ${galaxy._id}`
-            p= `Name: ${galaxy.name}`
-            p= `Year: ${galaxy.year}`
-            p= `Inventor: ${galaxy.inventor}`
-            p= `Distance: ${galaxy.distance} light-years`
-            p= `Type: ${galaxy.type}`
-            a(href=`/galaxies/${galaxy._id}`) Inspect
-            a(href=`/galaxies/${galaxy._id}/update`) Update
-            a(href=`/galaxies/${galaxy._id}/delete`) Delete
+            p Instance ID:
+              span.instanceAttr #{galaxy._id}
+            p Name:
+              span.instanceAttr #{galaxy.name}
+            p Year:
+              span.instanceAttr #{galaxy.year}
+            p Inventor:
+              span.instanceAttr #{galaxy.inventor}
+            p Distance:
+              span.instanceAttr #{galaxy.distance} light-years
+            p Type:
+              span.instanceAttr #{galaxy.type}
+            a(href=`/galaxies/${galaxy._id}` class="btn btn-primary btn-sm") Inspect
+            a(href=`/galaxies/${galaxy._id}/update` class="btn btn-warning btn-sm") Update
+            a(href=`/galaxies/${galaxy._id}/delete` class="btn btn-danger btn-sm") Delete
       else
         p No galaxies found.
 
   // Add a link to add a new galaxy
-  a(href='/galaxies/create') Add New Galaxy
+  a(href='/galaxies/create' class="btn btn-success") Add New Galaxy
 
   // Display details for a single galaxy if isSingle is true
   if isSingle && galaxy
     .galaxy-detail
       h3 Galaxy Details
-      p Name: #{galaxy.name}
-      p Year: #{galaxy.year}
-      p Inventor: #{galaxy.inventor}
-      p Distance: #{galaxy.distance} light-years
-      p Type: #{galaxy.type}
-      a(href=`/galaxies/${galaxy._id}/update`) Update Galaxy
-      a(href=`/galaxies/${galaxy._id}/delete`) Delete Galaxy
+      p Name:
+        span.instanceAttr #{galaxy.name}
+      p Year:
+        span.instanceAttr #{galaxy.year}
+      p Inventor:
+        span.instanceAttr #{galaxy.inventor}
+      p Distance:
+        span.instanceAttr #{galaxy.distance} light-years
+      p Type:
+        span.instanceAttr #{galaxy.type}
+      a(href=`/galaxies/${galaxy._id}/update` class="btn btn-warning btn-sm") Update Galaxy
+      a(href=`/galaxies/${galaxy._id}/delete` class="btn btn-danger btn-sm") Delete Galaxy
