@@ -13,13 +13,17 @@ block content
       if results && results.length > 0
         each galaxy in results
           .col-sm-3.mb-4
-            .card(onclick=`inspect('${galaxy._id}')`, style="cursor: pointer;")
+            .card(style="cursor: pointer;")
               .card-body
                 h5.card-title #{galaxy.name}
                 p.card-text Year: #{galaxy.year}
                 p.card-text Inventor: #{galaxy.inventor}
                 p.card-text Distance: #{galaxy.distance} light-years
                 p.card-text Type: #{galaxy.type}
+
+                // Update button with confirmation
+                if galaxy._id
+                  a.btn.btn-primary.mt-2(href=`javascript:void(0);` onclick=`confirmUpdate('${galaxy._id}')` title="Update Galaxy" aria-label="Update Galaxy") Update
       else
         .col-12
           p No galaxies found.
@@ -28,16 +32,16 @@ block content
   .mt-4
     a.btn.btn-primary(href='/') Back to Home
 
-  // Script for the click functionality
-  script.
-    function inspect(id) {
-      alert(`Inspecting Galaxy ID: ${id}`);
-      window.location.href = `/galaxies/${id}`;  // Redirect to galaxy details
-    }
-
   // Optional: Hover effect for the clickable cards
   style.
     .card:hover {
       transform: scale(1.05);
       transition: transform 0.3s ease;
+
+  // Script for confirmation
+  script.
+    function confirmUpdate(id) {
+      if (confirm("Do you want to update this galaxy?")) {
+        window.location.href = `/update?id=${id}`;
+      }
     }

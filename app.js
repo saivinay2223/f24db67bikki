@@ -19,11 +19,19 @@ mongoose.connect(connectionString, {
     process.exit(1); // Exit the application if the connection fails
   });
 
+// Import passport and passport-local modules
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+
 // Import routes
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const resourceRouter = require('./routes/resource');
-const galaxiesRouter = require('./routes/galaxies'); // Ensure galaxies route is imported
+const galaxiesRouter = require('./routes/galaxies');
+const accountRouter = require('./routes/account'); // Add the account router for login/register/logout
+
+// Import Account model for Passport
+const Account = require('./models/account');
 
 const app = express();
 
@@ -38,11 +46,26 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Passport setup
+passport.use(new LocalStrategy(Account.authenticate()));  // Use the local strategy for authentication
+passport.serializeUser(Account.serializeUser());  // Serialize user
+passport.deserializeUser(Account.deserializeUser());  // Deserialize user
+
+// Session setup for Passport
+app.use(require('express-session')({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+
 // Routes
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/resource', resourceRouter);
-app.use('/galaxies', galaxiesRouter);  // Ensure galaxies route is used
+app.use('/galaxies', galaxiesRouter);
+app.use('/account', accountRouter);  // Ensure account route is used for login/register/logout
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
