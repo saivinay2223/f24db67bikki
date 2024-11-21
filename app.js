@@ -28,7 +28,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const resourceRouter = require('./routes/resource');
 const galaxiesRouter = require('./routes/galaxies');
-const accountRouter = require('./routes/account'); // Add the account router for login/register/logout
+//const accountRouter = require('./routes/account'); // Add the account router for login/register/logout
 
 // Import Account model for Passport
 const Account = require('./models/account');
@@ -65,7 +65,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/resource', resourceRouter);
 app.use('/galaxies', galaxiesRouter);
-app.use('/account', accountRouter);  // Ensure account route is used for login/register/logout
+//app.use('/account', accountRouter);  // Ensure account route is used for login/register/logout
 
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
