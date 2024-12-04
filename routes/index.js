@@ -4,60 +4,67 @@ var passport = require('passport');
 var Account = require('../models/account'); // Ensure the Account model is correctly referenced
 
 // GET home page
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express', user: req.user });
+router.get('/', function (req, res) {
+  res.render('index', { title: 'Galaxies App', user: req.user });
+});
+
+// GET register page
+router.get('/register', function (req, res) {
+  res.render('register', { title: 'Galaxies App Registration' });
+});
+
+// POST register with duplicate check
+router.post('/register', function (req, res) {
+  Account.findOne({ username: req.body.username })
+    .then(function (existingUser) {
+      if (existingUser) {
+        return res.render('register', {
+          title: 'Registration',
+          message: 'Error: Username already exists',
+          account: req.body.username,
+        });
+      }
+
+      const newAccount = new Account({ username: req.body.username });
+      Account.register(newAccount, req.body.password, function (err, user) {
+        if (err || !user) {
+          console.error("Registration error:", err || "User creation failed");
+          return res.render('register', {
+            title: 'Registration',
+            message: 'Error: Registration failed',
+            account: req.body.username,
+          });
+        }
+        console.log("Registration successful. Redirecting...");
+        res.redirect('/');
+      });
+    })
+    .catch(function (err) {
+      console.error("Database error during registration:", err.message);
+      return res.render('register', {
+        title: 'Registration',
+        message: 'Error: Registration failed',
+      });
+    });
 });
 
 // GET login page
-router.get('/login', function(req, res, next) {
-  res.render('login', { title: 'Login' });
+router.get('/login', function (req, res) {
+  res.render('login', { title: 'Galaxies App Login', user: req.user });
 });
 
 // POST login
 router.post('/login', passport.authenticate('local', {
   successRedirect: '/',
   failureRedirect: '/login',
-  failureFlash: true
+  failureFlash: true,
 }));
 
-// GET register page
-router.get('/register', function(req, res, next) {
-  res.render('register', { title: 'Register' });
-});
-
-// POST register with duplicate check
-router.post('/register', async function(req, res, next) {
-  try {
-    // Check if the username already exists
-    const existingUser = await Account.findOne({ username: req.body.username });
-    if (existingUser) {
-      return res.render('register', {
-        title: 'Register',
-        message: 'Error: Username already exists',
-      });
-    }
-
-    // Create a new user if no duplicates are found
-    const newAccount = new Account({ username: req.body.username });
-    await Account.register(newAccount, req.body.password);
-    
-    // Authenticate and redirect
-    passport.authenticate('local')(req, res, function() {
-      res.redirect('/');
-    });
-  } catch (err) {
-    console.error("Registration error:", err.message);
-    return res.render('register', {
-      title: 'Register',
-      message: 'Registration error: ' + err.message,
-    });
-  }
-});
-
 // GET logout
-router.get('/logout', function(req, res, next) {
-  req.logout(function(err) {
+router.get('/logout', function (req, res) {
+  req.logout(function (err) {
     if (err) {
+      console.error("Logout error:", err);
       return next(err);
     }
     res.redirect('/');
@@ -65,7 +72,7 @@ router.get('/logout', function(req, res, next) {
 });
 
 // GET ping endpoint to check server health
-router.get('/ping', function(req, res) {
+router.get('/ping', function (req, res) {
   res.status(200).send('pong!');
 });
 

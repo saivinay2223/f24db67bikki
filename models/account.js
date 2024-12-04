@@ -2,14 +2,17 @@ const mongoose = require('mongoose');
 const passportLocalMongoose = require('passport-local-mongoose');
 const Schema = mongoose.Schema;
 
-// Define account schema
-const accountSchema = new Schema({
-  username: String,
-  password: String
+// Define Galaxy schema
+const galaxySchema = new Schema({
+  name: { type: String, required: true },
+  year: { type: Number, required: true },
+  inventor: { type: String, required: true },
+  distance: { type: Number, required: true },
+  type: { type: String, required: true },
 });
 
-// Use passport-local-mongoose for authentication-related fields and methods
-accountSchema.plugin(passportLocalMongoose);
+// Use passport-local-mongoose for user authentication functionality
+galaxySchema.plugin(passportLocalMongoose);
 
 // Export the model
-module.exports = mongoose.model('Account', accountSchema);
+module.exports = mongoose.model('Galaxy', galaxySchema);

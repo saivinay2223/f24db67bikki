@@ -3,24 +3,21 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport');
 require('dotenv').config();
 
 const mongoose = require('mongoose');
 const connectionString = process.env.MONGO_CON;
 
-// Establish MongoDB connection with better error handling
-mongoose.connect(connectionString, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
-})
-  .then(() => console.log("Connected to DB successfully"))
+// Establish MongoDB connection with error handling
+mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log("Connected to MongoDB successfully"))
   .catch((err) => {
     console.error("MongoDB connection error:", err.message);
-    process.exit(1); // Exit the application if the connection fails
+    process.exit(1); // Exit if unable to connect to the database
   });
 
-// Import passport and passport-local modules
-const passport = require('passport');
+// Import Passport and its local strategy
 const LocalStrategy = require('passport-local').Strategy;
 
 // Import routes
@@ -28,34 +25,34 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const resourceRouter = require('./routes/resource');
 const galaxiesRouter = require('./routes/galaxies');
-//const accountRouter = require('./routes/account'); // Add the account router for login/register/logout
 
-// Import Account model for Passport
+// Import Account model for Passport authentication
 const Account = require('./models/account');
 
+// Create Express app
 const app = express();
 
-// View engine setup
+// Set up view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // Middleware setup
-app.use(logger('dev')); 
+app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Passport setup
-passport.use(new LocalStrategy(Account.authenticate()));  // Use the local strategy for authentication
-passport.serializeUser(Account.serializeUser());  // Serialize user
-passport.deserializeUser(Account.deserializeUser());  // Deserialize user
+passport.use(new LocalStrategy(Account.authenticate())); // Configure passport-local strategy
+passport.serializeUser(Account.serializeUser());
+passport.deserializeUser(Account.deserializeUser());
 
-// Session setup for Passport
+// Configure session for Passport
 app.use(require('express-session')({
   secret: 'keyboard cat',
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -65,9 +62,33 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/resource', resourceRouter);
 app.use('/galaxies', galaxiesRouter);
-//app.use('/account', accountRouter);  // Ensure account route is used for login/register/logout
 
-// Catch 404 and forward to error handler
+// Database seeding function
+const galaxySchema = new mongoose.Schema({
+  name: String,
+  size: Number,
+  distance: Number
+});
+const Galaxy = mongoose.models.Galaxy || mongoose.model('Galaxy', galaxySchema);
+
+async function recreateDB() {
+  await Galaxy.deleteMany();
+
+  const galaxy1 = new Galaxy({ name: "Milky Way", size: 105700, distance: 0 });
+  const galaxy2 = new Galaxy({ name: "Andromeda", size: 220000, distance: 2537000 });
+  const galaxy3 = new Galaxy({ name: "Triangulum", size: 60000, distance: 3000000 });
+
+  await galaxy1.save();
+  await galaxy2.save();
+  await galaxy3.save();
+  console.log("Database has been seeded successfully.");
+}
+
+if (process.env.RESEED === "true") {
+  recreateDB();
+}
+
+// Catch 404 errors
 app.use((req, res, next) => {
   next(createError(404));
 });
@@ -80,4 +101,5 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
+// Export the app module
 module.exports = app;
