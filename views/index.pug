@@ -1,8 +1,17 @@
 extends layout
 
 block content
-  h1 Welcome to vinay's web pages
+  h1 Welcome to Vinay's Web Pages
   p This is a sample web page with an interactive button.
+
+  if (!user)
+    a(href="/login") Login
+    br
+    a(href="/register") Register
+  if (user)
+    p You are currently logged in as #{user.username}
+    a(href="/logout") Logout
+
   button(type="button", class="btn btn-secondary", onclick="boost()") Sample Button
   div#boost Add in extra
   script.

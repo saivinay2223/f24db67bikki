@@ -1,15 +1,14 @@
 extends layout
-
 block content
-  h1 Login
-  form(action="/login", method="post")
-    div
-      label(for="username") Username:
-      input(type="text", name="username", id="username", required)
-    div
-      label(for="password") Password:
-      input(type="password", name="password", id="password", required)
-    div
-      button(type="submit") Login
-  p Don't have an account? 
-  a(href="/register") Register here
+  .container
+    h1= title
+    h2= message
+    br
+    form(role='form', action="/login", method="post", style='max-width: 300px;')
+      .form-group
+        input.form-control(type='text', name="username", placeholder='Enter Username')
+      .form-group
+        input.form-control(type='password', name="password", placeholder='Password')
+      button.btn.btn-default(type='submit') Submit
+    a(href='/')
+      button.btn.btn-primary(type="button") Cancel
