@@ -7,6 +7,8 @@ block content
     else
       | Search Results - Galaxies
 
+  button.btn(class="btn-primary m-1", onclick="window.location.href='/galaxies/create'") Create
+
   .container-fluid
     .row
       // Check if results exist and iterate through them
@@ -16,14 +18,21 @@ block content
             .card(style="cursor: pointer;")
               .card-body
                 h5.card-title #{galaxy.name}
-                p.card-text Year: #{galaxy.year}
-                p.card-text Inventor: #{galaxy.inventor}
+                p.card-text Size: #{galaxy.size} light-years
                 p.card-text Distance: #{galaxy.distance} light-years
                 p.card-text Type: #{galaxy.type}
 
+                // Detail button
+                - let detailDestination = `/galaxies/detail?id=${galaxy._id}`
+                button.btn(class="btn-primary m-1", onclick="window.location.href='#{detailDestination}'") Detail
+
                 // Update button with confirmation
-                if galaxy._id
-                  a.btn.btn-primary.mt-2(href=`javascript:void(0);` onclick=`confirmUpdate('${galaxy._id}')` title="Update Galaxy" aria-label="Update Galaxy") Update
+                - let updateDestination = `/galaxies/update?id=${galaxy._id}`
+                button.btn(class="btn-primary m-1", onclick="window.location.href='#{updateDestination}'") Update
+
+                // Delete button with confirmation
+                - let deleteDestination = `/galaxies/delete?id=${galaxy._id}`
+                button.btn(class="btn-danger m-1", onclick="confirmDelete('#{deleteDestination}')") Delete
       else
         .col-12
           p No galaxies found.
@@ -38,10 +47,10 @@ block content
       transform: scale(1.05);
       transition: transform 0.3s ease;
 
-  // Script for confirmation
+  // Script for delete confirmation
   script.
-    function confirmUpdate(id) {
-      if (confirm("Do you want to update this galaxy?")) {
-        window.location.href = `/update?id=${id}`;
+    function confirmDelete(path) {
+      if (confirm("Are you sure you want to delete this galaxy?")) {
+        window.location.href = path;
       }
     }

@@ -4,6 +4,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const passport = require('passport');
+const flash = require('connect-flash'); // Import connect-flash
 require('dotenv').config();
 
 const mongoose = require('mongoose');
@@ -43,19 +44,30 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Set up session for Passport
+app.use(require('express-session')({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: false,
+}));
+
+// Add flash middleware (after session and before passport)
+app.use(flash()); // This is where you enable flash messages
+
 // Passport setup
 passport.use(new LocalStrategy(Account.authenticate())); // Configure passport-local strategy
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
 
 // Configure session for Passport
-app.use(require('express-session')({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: false,
-}));
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Add flash messages to locals to make them available in views
+app.use(function (req, res, next) {
+  res.locals.messages = req.flash(); // Pass flash messages to locals
+  next();
+});
 
 // Routes
 app.use('/', indexRouter);
